@@ -57,6 +57,29 @@ app.get("/today", (req, res) => {
   }
 });
 
+app.get("/all", (req, res) => {
+  try {
+    const rawData = fs.readFileSync(outputFilePath, "utf-8");
+    const allData = JSON.parse(rawData);
+
+    const todayContent = allData;
+
+    if (todayContent != null) {
+      const contentForToday = todayContent;
+      res.json(contentForToday);
+    } else {
+      res.json({
+        error: "No data available date.",
+      });
+    }
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).json({
+      error: "No data available for today's date.",
+    });
+  }
+});
+
 app.post("/todaycurrency", (req, res) => {
   try {
     const rawData = fs.readFileSync(outputFilePath, "utf-8");
