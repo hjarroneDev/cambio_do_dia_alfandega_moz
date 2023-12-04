@@ -151,7 +151,8 @@ async function scrapeWebsite() {
   const url = `https://jue.mcnet.co.mz/mcnet/portal/exchangerate?selectedDate=${formattedDate}`;
 
   try {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ headless: true });
+
     const page = await browser.newPage();
     await page.goto(url);
 
