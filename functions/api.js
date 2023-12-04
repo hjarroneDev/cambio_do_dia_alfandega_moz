@@ -3,11 +3,12 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 const bodyParser = require("body-parser");
 const cron = require("node-cron");
+const router = express.Router();
 require("dotenv").config;
 
 const app = express();
 
-app.use(bodyParser.json());
+router.use(bodyParser.json());
 
 const port = 8584;
 // You can change this to any port you prefer
@@ -18,7 +19,7 @@ const day = today.getDate();
 const formattedDate = `${day}-${month}-${year}`;
 
 
-app.get("/", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     await scrapeWebsite();
     res.send("Scraping initiated.");
@@ -28,7 +29,7 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.get("/today", (req, res) => {
+router.get("/today", (req, res) => {
   try {
     const rawData = fs.readFileSync("output.json", "utf-8");
     const allData = JSON.parse(rawData);
@@ -51,7 +52,7 @@ app.get("/today", (req, res) => {
   }
 });
 
-app.post("/todaycurrency", (req, res) => {
+router.post("/todaycurrency", (req, res) => {
   try {
     const rawData = fs.readFileSync("output.json", "utf-8");
     const allData = JSON.parse(rawData);
@@ -87,7 +88,7 @@ app.post("/todaycurrency", (req, res) => {
   }
 });
 
-app.post("/getbydata", (req, res) => {
+router.post("/getbydata", (req, res) => {
   try {
     const rawData = fs.readFileSync("output.json", "utf-8");
     const allData = JSON.parse(rawData);
@@ -111,7 +112,7 @@ app.post("/getbydata", (req, res) => {
   }
 });
 
-app.post("/getbydatacurrency", (req, res) => {
+router.post("/getbydatacurrency", (req, res) => {
   try {
     const rawData = fs.readFileSync("output.json", "utf-8");
     const allData = JSON.parse(rawData);
@@ -147,7 +148,7 @@ app.post("/getbydatacurrency", (req, res) => {
   }
 });
 
-app.listen(port, () => {
+router.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
 
