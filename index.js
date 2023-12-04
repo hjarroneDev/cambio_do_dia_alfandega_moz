@@ -3,11 +3,14 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 const bodyParser = require("body-parser");
 const cron = require("node-cron");
+require("dotenv").config;
 
 const app = express();
 
 app.use(bodyParser.json());
-const port = 8584; // You can change this to any port you prefer
+
+const PORT = process.env.PORT || 8584;
+// You can change this to any port you prefer
 const today = new Date();
 const year = today.getFullYear();
 const month = today.getMonth() + 1; // JavaScript months are 0-based
@@ -144,14 +147,25 @@ app.post("/getbydatacurrency", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
 
 async function scrapeWebsite() {
   const url = `https://jue.mcnet.co.mz/mcnet/portal/exchangerate?selectedDate=${formattedDate}`;
 
   try {
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({
+      args: [
+        "--disable-setuid-sandbox",
+        "--no-sandbox",
+        "--single-process",
+        "--no-zygote",
+      ],
+      executablePath:
+        process.env.NODE_ENV === "production"
+          ? process.env.PUPPETEER_EXECUTABLE_PATH
+          : puppeteer.executablePath(),
+    });
 
     const page = await browser.newPage();
     await page.goto(url);
