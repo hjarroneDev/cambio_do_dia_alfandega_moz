@@ -9,7 +9,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-const port = process.env.PORT || 8584;
+const port = 8584;
 // You can change this to any port you prefer
 const today = new Date();
 const year = today.getFullYear();
@@ -17,8 +17,22 @@ const month = today.getMonth() + 1; // JavaScript months are 0-based
 const day = today.getDate();
 const formattedDate = `${day}-${month}-${year}`;
 
+// Function to grant write permissions to the "output.json" file
+const grantPermissions = () => {
+  const filePath = './output.json';
+  const permissions = 0o666; // Grant read and write permissions to the current user
+
+  try {
+    fs.chmodSync(filePath, permissions);
+    console.log('Permissions updated for ' + filePath);
+  } catch (error) {
+    console.error('Error updating permissions:', error.message);
+  }
+};
+
 app.get("/", async (req, res) => {
   try {
+    grantPermissions(); 
     await scrapeWebsite();
     res.send("Scraping initiated.");
   } catch (error) {
