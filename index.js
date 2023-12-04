@@ -16,7 +16,7 @@ const month = today.getMonth() + 1;
 const day = today.getDate();
 const formattedDate = `${day}-${month}-${year}`;
 
-// Save the combined data to a JSON file inside the "Dados" folder
+// Save the combined data to a JSON file inside the "Dados" folders
 const outputFolderPath = "Dados";
 const outputFilePath = `${outputFolderPath}/output.json`;
 
