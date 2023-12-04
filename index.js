@@ -10,12 +10,18 @@ const app = express();
 app.use(bodyParser.json());
 
 const port = 8584;
-// You can change this to any port you prefer
 const today = new Date();
 const year = today.getFullYear();
-const month = today.getMonth() + 1; // JavaScript months are 0-based
+const month = today.getMonth() + 1;
 const day = today.getDate();
 const formattedDate = `${day}-${month}-${year}`;
+
+// Save the combined data to a JSON file inside the "Dados" folder
+const outputFolderPath = "Dados";
+const outputFilePath = `${outputFolderPath}/output.json`;
+
+fs.mkdirSync(outputFolderPath, { recursive: true });
+
 
 
 app.get("/", async (req, res) => {
@@ -30,7 +36,7 @@ app.get("/", async (req, res) => {
 
 app.get("/today", (req, res) => {
   try {
-    const rawData = fs.readFileSync("output.json", "utf-8");
+    const rawData = fs.readFileSync(outputFilePath, "utf-8");
     const allData = JSON.parse(rawData);
 
     const todayContent = allData[formattedDate];
@@ -53,7 +59,7 @@ app.get("/today", (req, res) => {
 
 app.post("/todaycurrency", (req, res) => {
   try {
-    const rawData = fs.readFileSync("output.json", "utf-8");
+    const rawData = fs.readFileSync(outputFilePath, "utf-8");
     const allData = JSON.parse(rawData);
 
     const requestedCurrency = req.body.currency;
@@ -89,7 +95,7 @@ app.post("/todaycurrency", (req, res) => {
 
 app.post("/getbydata", (req, res) => {
   try {
-    const rawData = fs.readFileSync("output.json", "utf-8");
+    const rawData = fs.readFileSync(outputFilePath, "utf-8");
     const allData = JSON.parse(rawData);
 
     const requestedDate = req.body.date; // Assuming you send the date in the request body
@@ -113,7 +119,7 @@ app.post("/getbydata", (req, res) => {
 
 app.post("/getbydatacurrency", (req, res) => {
   try {
-    const rawData = fs.readFileSync("output.json", "utf-8");
+    const rawData = fs.readFileSync(outputFilePath, "utf-8");
     const allData = JSON.parse(rawData);
 
     const requestedDate = req.body.date;
@@ -217,7 +223,7 @@ async function scrapeWebsite() {
 
     // Save the combined data to a JSON file
     fs.writeFileSync(
-      "output.json",
+      outputFilePath,
       JSON.stringify(dataByDate, null, 2),
       "utf-8"
     );
@@ -244,5 +250,4 @@ cron.schedule(
   { timezone: "Africa/Maputo" }
 );
 
-app.use('/.netlify/functions/api', router);
-module.exports.handler = serverless(app);
+module.exports = app;
