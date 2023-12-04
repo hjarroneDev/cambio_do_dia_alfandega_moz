@@ -9,7 +9,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-const port = 8584;
+const port = process.env.PORT || 8584;
 const today = new Date();
 const year = today.getFullYear();
 const month = today.getMonth() + 1;
