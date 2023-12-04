@@ -24,7 +24,6 @@ app.get("/", async (req, res) => {
   }
 });
 
-
 app.get("/today", (req, res) => {
   try {
     const rawData = fs.readFileSync("output.json", "utf-8");
@@ -54,7 +53,6 @@ app.post("/todaycurrency", (req, res) => {
     const allData = JSON.parse(rawData);
 
     const requestedCurrency = req.body.currency;
-
 
     if (allData[formattedDate]) {
       // Find the currency in the data for the requested date
@@ -117,7 +115,7 @@ app.post("/getbydatacurrency", (req, res) => {
     const requestedDate = req.body.date;
     const requestedCurrency = req.body.currency; // Assuming you send the currency in the request body
 
-    // Check if the requested date exists in the data
+    // Check if the requested date exists in the datas
     if (allData[requestedDate]) {
       // Find the currency in the data for the requested date
       const currencyData = allData[requestedDate].find(
