@@ -9,7 +9,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-const PORT = process.env.PORT || 8584;
+const port = process.env.PORT || 8584;
 // You can change this to any port you prefer
 const today = new Date();
 const year = today.getFullYear();
@@ -147,7 +147,7 @@ app.post("/getbydatacurrency", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
 
 async function scrapeWebsite() {
