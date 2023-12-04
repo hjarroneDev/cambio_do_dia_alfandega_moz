@@ -227,3 +227,5 @@ cron.schedule(
   },
   { timezone: "Africa/Maputo" }
 );
+
+module.exports = app;
