@@ -35,6 +35,17 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/today", (req, res) => {
+
+  res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+
+
+
   try {
     const rawData = fs.readFileSync(outputFilePath, "utf-8");
     const allData = JSON.parse(rawData);
@@ -58,6 +69,13 @@ app.get("/today", (req, res) => {
 });
 
 app.get("/all", (req, res) => {
+
+  res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
   try {
     const rawData = fs.readFileSync(outputFilePath, "utf-8");
     const allData = JSON.parse(rawData);
@@ -81,6 +99,13 @@ app.get("/all", (req, res) => {
 });
 
 app.post("/todaycurrency", (req, res) => {
+
+  res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
   try {
     const rawData = fs.readFileSync(outputFilePath, "utf-8");
     const allData = JSON.parse(rawData);
@@ -117,6 +142,13 @@ app.post("/todaycurrency", (req, res) => {
 });
 
 app.post("/getbydata", (req, res) => {
+
+  res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
   try {
     const rawData = fs.readFileSync(outputFilePath, "utf-8");
     const allData = JSON.parse(rawData);
@@ -141,6 +173,14 @@ app.post("/getbydata", (req, res) => {
 });
 
 app.post("/getbydatacurrency", (req, res) => {
+
+  res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
   try {
     const rawData = fs.readFileSync(outputFilePath, "utf-8");
     const allData = JSON.parse(rawData);
@@ -244,13 +284,27 @@ async function scrapeWebsite() {
       }
     }
 
-    // Save the combined data to a JSON file
-    fs.writeFileSync(
-      outputFilePath,
-      JSON.stringify(dataByDate, null, 2),
-      "utf-8"
-    );
-    console.log("Data saved to output.json");
+    // Verifica se o arquivo já existe
+    if (fs.existsSync(outputFilePath)) {
+      // Lê o conteúdo existente do arquivo
+      const existingData = fs.readFileSync(outputFilePath, "utf-8");
+
+      // Converte o conteúdo existente para um objeto JavaScript
+      const existingDataObject = JSON.parse(existingData);
+
+      // Adiciona a nova data ao objeto existente
+      existingDataObject[formattedDate] = dataByDate[formattedDate];
+
+      // Escreve o objeto atualizado de volta no arquivo
+      fs.writeFileSync(outputFilePath, JSON.stringify(existingDataObject, null, 2), "utf-8");
+    } else {
+      // Se o arquivo não existir, cria um novo arquivo com os dados atuais
+      fs.writeFileSync(outputFilePath, JSON.stringify(dataByDate, null, 2), "utf-8");
+    }
+
+
+
+    console.log("Cambio Actualizado");
 
     // Close the browser
     await browser.close();
@@ -261,16 +315,16 @@ async function scrapeWebsite() {
   }
 }
 
-scrapeWebsite();
-
 // Schedule the script to run once per day at 08:00 AM in Africa/Maputo timezone
 cron.schedule(
   "0 8 * * *",
   () => {
-    console.log("Running the scraping script...");
+    console.log("Verificando novo Cambio...");
     scrapeWebsite();
   },
   { timezone: "Africa/Maputo" }
 );
 
+
+scrapeWebsite();
 module.exports = app;
