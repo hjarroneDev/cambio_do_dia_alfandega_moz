@@ -22,6 +22,8 @@ const outputFilePath = `${outputFolderPath}/output.json`;
 
 fs.mkdirSync(outputFolderPath, { recursive: true });
 
+
+
 app.get("/", async (req, res) => {
   try {
     await scrapeWebsite();
@@ -33,12 +35,16 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/today", (req, res) => {
+
   res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   if (req.method === "OPTIONS") {
     return res.sendStatus(200);
   }
+
+
+
 
   try {
     const rawData = fs.readFileSync(outputFilePath, "utf-8");
@@ -63,6 +69,7 @@ app.get("/today", (req, res) => {
 });
 
 app.get("/all", (req, res) => {
+
   res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -92,6 +99,7 @@ app.get("/all", (req, res) => {
 });
 
 app.post("/todaycurrency", (req, res) => {
+
   res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -134,6 +142,7 @@ app.post("/todaycurrency", (req, res) => {
 });
 
 app.post("/getbydata", (req, res) => {
+
   res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -164,6 +173,7 @@ app.post("/getbydata", (req, res) => {
 });
 
 app.post("/getbydatacurrency", (req, res) => {
+
   res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -235,21 +245,22 @@ async function scrapeWebsite() {
 
     let dataByDate = {};
 
-    // Wait for the content to load
-    await page.waitForSelector("span > a.paginate_button.current");
 
-    const buttons = await page.$$("span > a.paginate_button.current");
-    const numberOfCurrentButtons = buttons.length + 1;
+     // Wait for the content to load
+     await page.waitForSelector("span > a.paginate_button.current");
 
-    console.log(
-      `Number of "paginate_button current" elements: ${numberOfCurrentButtons}`
-    );
+     const buttons = await page.$$("span > a.paginate_button.current");
+     const numberOfCurrentButtons = buttons.length;
 
-    for (
-      let pageNumber = 0;
-      pageNumber < numberOfCurrentButtons + 1;
-      pageNumber++
-    ) {
+     console.log(
+       `Number of "paginate_button current" elements: ${numberOfCurrentButtons}`
+     );
+
+
+
+
+
+    for (let pageNumber = 0; pageNumber < numberOfCurrentButtons; pageNumber++) {
       // Extract "Moeda," "Descrição," and "Taxa" content from each row
       const rowData = await page.evaluate(() => {
         const rows = document.querySelectorAll("tbody tr");
@@ -274,7 +285,6 @@ async function scrapeWebsite() {
       if (!dataByDate[formattedDate]) {
         dataByDate[formattedDate] = [];
       }
-
       dataByDate[formattedDate] = [...dataByDate[formattedDate], ...rowData];
 
       // Click on the pagination button to go to the next page
@@ -301,19 +311,13 @@ async function scrapeWebsite() {
       existingDataObject[formattedDate] = dataByDate[formattedDate];
 
       // Escreve o objeto atualizado de volta no arquivo
-      fs.writeFileSync(
-        outputFilePath,
-        JSON.stringify(existingDataObject, null, 2),
-        "utf-8"
-      );
+      fs.writeFileSync(outputFilePath, JSON.stringify(existingDataObject, null, 2), "utf-8");
     } else {
       // Se o arquivo não existir, cria um novo arquivo com os dados atuais
-      fs.writeFileSync(
-        outputFilePath,
-        JSON.stringify(dataByDate, null, 2),
-        "utf-8"
-      );
+      fs.writeFileSync(outputFilePath, JSON.stringify(dataByDate, null, 2), "utf-8");
     }
+
+
 
     console.log("Cambio Actualizado");
 
@@ -335,6 +339,7 @@ cron.schedule(
   },
   { timezone: "Africa/Maputo" }
 );
+
 
 scrapeWebsite();
 module.exports = app;
