@@ -323,7 +323,8 @@ async function scrapeWebsite() {
 
 // Schedule the script to run every 30 minutes
 cron.schedule(
-  "*/1 * * * *", // Run every 30 minutes
+  "0 */5 * * *", // Run every 5 hours
+
   () => {
     console.log("Verificando novo Cambio...");
     scrapeWebsite();
