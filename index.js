@@ -105,7 +105,7 @@ app.post("/todaycurrency", (req, res) => {
     const requestedCurrency = req.body.currency;
 
     if (allData[formattedDate]) {
-      // Find the currency in the data for the requested date
+      // Find the currency in the data for the requested date45454
       const currencyData = allData[formattedDate].find(
         (entry) => entry.moeda === requestedCurrency
       );
