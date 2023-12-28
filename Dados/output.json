@@ -1,0 +1,34 @@
+{
+  "28-12-2023": [
+    {
+      "moeda": "ZAR",
+      "descricao": "RAND",
+      "taxa": "3.49"
+    },
+    {
+      "moeda": "USD",
+      "descricao": "US DOLLAR",
+      "taxa": "64.52"
+    },
+    {
+      "moeda": "JPY",
+      "descricao": "YEN",
+      "taxa": "0.45"
+    },
+    {
+      "moeda": "GBP",
+      "descricao": "LIBRA",
+      "taxa": "82.01"
+    },
+    {
+      "moeda": "EUR",
+      "descricao": "EURO",
+      "taxa": "71.07"
+    },
+    {
+      "moeda": "CHF",
+      "descricao": "FRANCO SUICO",
+      "taxa": "75.65"
+    }
+  ]
+}
