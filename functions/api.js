@@ -1,15 +1,18 @@
 const express = require("express");
+
 const puppeteer = require("puppeteer");
 const fs = require("fs");
 const bodyParser = require("body-parser");
 const cron = require("node-cron");
 require("dotenv").config;
 
+const serverless = require('serverless-http');
+const router = express.Router();
+
 const app = express();
 
-app.use(bodyParser.json());
+router.use(bodyParser.json());
 
-const port = process.env.PORT || 8584;
 const today = new Date();
 const year = today.getFullYear();
 const month = today.getMonth() + 1;
@@ -22,7 +25,7 @@ const outputFilePath = `${outputFolderPath}/output.json`;
 
 fs.mkdirSync(outputFolderPath, { recursive: true });
 
-app.get("/", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     await scrapeWebsite();
     res.send("Scraping initiated.");
@@ -32,7 +35,7 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.get("/today", (req, res) => {
+router.get("/today", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -62,7 +65,7 @@ app.get("/today", (req, res) => {
   }
 });
 
-app.get("/all", (req, res) => {
+router.get("/all", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -91,7 +94,7 @@ app.get("/all", (req, res) => {
   }
 });
 
-app.post("/todaycurrency", (req, res) => {
+router.post("/todaycurrency", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -133,7 +136,7 @@ app.post("/todaycurrency", (req, res) => {
   }
 });
 
-app.post("/getbydata", (req, res) => {
+router.post("/getbydata", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -163,7 +166,7 @@ app.post("/getbydata", (req, res) => {
   }
 });
 
-app.post("/getbydatacurrency", (req, res) => {
+router.post("/getbydatacurrency", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -206,9 +209,7 @@ app.post("/getbydatacurrency", (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+
 
 async function scrapeWebsite() {
   const url = `https://jue.mcnet.co.mz/mcnet/portal/exchangerate?selectedDate=${formattedDate}`;
@@ -334,4 +335,5 @@ cron.schedule(
 
 scrapeWebsite();
 
-module.exports = app;
+app.use('/.netlify/functions/api', router);
+module.exports.handler = serverless(app);

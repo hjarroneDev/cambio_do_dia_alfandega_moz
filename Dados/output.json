@@ -1,0 +1,144 @@
+{
+  "4-1-2024": [
+    {
+      "moeda": "ZMW",
+      "descricao": "KWACHA",
+      "taxa": "2.50"
+    },
+    {
+      "moeda": "ZAR",
+      "descricao": "RAND",
+      "taxa": "3.53"
+    },
+    {
+      "moeda": "USD",
+      "descricao": "US DOLLAR",
+      "taxa": "64.55"
+    },
+    {
+      "moeda": "TZS",
+      "descricao": "SHILLING TANZANIANO",
+      "taxa": "0.03"
+    },
+    {
+      "moeda": "THB",
+      "descricao": "BAHT",
+      "taxa": "1.87"
+    },
+    {
+      "moeda": "SGD",
+      "descricao": "DOLAR DO SINGAPURA",
+      "taxa": "48.58"
+    },
+    {
+      "moeda": "SEK",
+      "descricao": "COROA SUECA",
+      "taxa": "6.30"
+    },
+    {
+      "moeda": "NZD",
+      "descricao": "DOLAR DA NOVA ZELAND",
+      "taxa": "40.25"
+    },
+    {
+      "moeda": "NOK",
+      "descricao": "KRONE NORUEGUES",
+      "taxa": "6.23"
+    },
+    {
+      "moeda": "NGN",
+      "descricao": "NAIRA",
+      "taxa": "0.07"
+    },
+    {
+      "moeda": "NAD",
+      "descricao": "DOLAR NAMIBIANO",
+      "taxa": "3.43"
+    },
+    {
+      "moeda": "MWK",
+      "descricao": "KWACHA",
+      "taxa": "0.04"
+    },
+    {
+      "moeda": "MUR",
+      "descricao": "RUPIA MAURICIANA",
+      "taxa": "1.46"
+    },
+    {
+      "moeda": "KWD",
+      "descricao": "DINAR KUWAITIANO",
+      "taxa": "209.80"
+    },
+    {
+      "moeda": "JPY",
+      "descricao": "YEN",
+      "taxa": "0.45"
+    },
+    {
+      "moeda": "INR",
+      "descricao": "INDIAN RUPEE",
+      "taxa": "0.77"
+    },
+    {
+      "moeda": "HUF",
+      "descricao": "FORINT",
+      "taxa": "0.18"
+    },
+    {
+      "moeda": "HKD",
+      "descricao": "DOLLAR DE HONG KONG",
+      "taxa": "8.27"
+    },
+    {
+      "moeda": "GBP",
+      "descricao": "LIBRA",
+      "taxa": "82.07"
+    },
+    {
+      "moeda": "EUR",
+      "descricao": "EURO",
+      "taxa": "71.09"
+    },
+    {
+      "moeda": "DKK",
+      "descricao": "COROA DINAMARQUESA",
+      "taxa": "9.45"
+    },
+    {
+      "moeda": "CNY",
+      "descricao": "YUAN RENMINBI",
+      "taxa": "9.03"
+    },
+    {
+      "moeda": "CHF",
+      "descricao": "FRANCO SUICO",
+      "taxa": "75.58"
+    },
+    {
+      "moeda": "CAD",
+      "descricao": "DOLAR CANADIANO",
+      "taxa": "48.35"
+    },
+    {
+      "moeda": "BWP",
+      "descricao": "PULA",
+      "taxa": "4.77"
+    },
+    {
+      "moeda": "BRL",
+      "descricao": "REAL BRAZILEIRO",
+      "taxa": "13.08"
+    },
+    {
+      "moeda": "AUD",
+      "descricao": "AUSTRALIA",
+      "taxa": "43.43"
+    },
+    {
+      "moeda": "AED",
+      "descricao": "EMIRATOS A UNIDOS",
+      "taxa": "17.57"
+    }
+  ]
+}
