@@ -21,11 +21,12 @@ const day = today.getDate();
 const formattedDate = `${day}-${month}-${year}`;
 
 // Save the combined data to a JSON file inside the "Dados" folders
-const outputFolderPath = path.join(__dirname, "Dados");
+const outputFolderPath = path.join("/tmp", "Dados");
+
 const outputFilePath = `${outputFolderPath}/output.json`;
 
 
-
+console.log("Current Working Directory:", process.cwd());
 console.log("Absolute Path:", outputFolderPath);
 
 fs.mkdirSync(outputFolderPath, { recursive: true });
