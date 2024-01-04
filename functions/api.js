@@ -5,6 +5,7 @@ const fs = require("fs");
 const bodyParser = require("body-parser");
 const cron = require("node-cron");
 require("dotenv").config;
+const path = require("path");
 
 const serverless = require('serverless-http');
 const router = express.Router();
@@ -20,8 +21,14 @@ const day = today.getDate();
 const formattedDate = `${day}-${month}-${year}`;
 
 // Save the combined data to a JSON file inside the "Dados" folders
-const outputFolderPath = "Dados";
+const outputFolderPath = path.join(__dirname, "Dados");
 const outputFilePath = `${outputFolderPath}/output.json`;
+
+
+
+console.log("Absolute Path:", outputFolderPath);
+
+fs.mkdirSync(outputFolderPath, { recursive: true });
 
 fs.mkdirSync(outputFolderPath, { recursive: true });
 
