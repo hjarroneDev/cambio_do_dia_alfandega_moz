@@ -138,7 +138,7 @@ async function scrapeAndUpdateData() {
 
 // Schedule cron job
 cron.schedule(
-  "0 */1 * * *", // Run every 1 hours
+  "* * * * *", // Run every 1 hours
   () => {
     console.log("Verificando novo Cambio...");
     scrapeAndUpdateData(); // No need to set isDataLoaded here, it will be set in the function
