@@ -33,9 +33,6 @@ function getFormattedDate() {
   return `${day}-${month}-${year}`;
 }
 
-scrapeAndUpdateData();
-console.log("Scraping function called on server initialization");
-
 //Inicio Scrap---------------------------------------------------------------------------------
 
 async function scrapeAndUpdateData() {
@@ -136,9 +133,15 @@ async function scrapeAndUpdateData() {
   }
 }
 
+// Define a route to trigger scraping when accessed
+router.get("/initialize-scraping", (req, res) => {
+  scrapeAndUpdateData();
+  res.status(200).send("Scraping initiated successfully");
+});
+
 // Schedule cron job
 cron.schedule(
-  "* * * * *", // Run every 1 hours
+  "0 */1 * * *", // Run every 1 hours
   () => {
     console.log("Verificando novo Cambio...");
     scrapeAndUpdateData(); // No need to set isDataLoaded here, it will be set in the function
