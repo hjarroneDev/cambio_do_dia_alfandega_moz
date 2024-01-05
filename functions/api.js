@@ -1,226 +1,45 @@
 const express = require("express");
-
 const puppeteer = require("puppeteer");
 const fs = require("fs");
 const bodyParser = require("body-parser");
 const cron = require("node-cron");
-require("dotenv").config;
+require("dotenv").config();
 const path = require("path");
+const serverless = require("serverless-http");
 
-const serverless = require('serverless-http');
+// Path to your Firebase Admin SDK service account key file
+
+var admin = require("firebase-admin");
+
+var serviceAccount = require("../draft-47b0f-firebase-adminsdk-tavu6-1848b372e8.json");
+const { Console } = require("console");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://draft-47b0f-default-rtdb.firebaseio.com",
+});
+
 const router = express.Router();
-
 const app = express();
-
 router.use(bodyParser.json());
 
-const today = new Date();
-const year = today.getFullYear();
-const month = today.getMonth() + 1;
-const day = today.getDate();
-const formattedDate = `${day}-${month}-${year}`;
+let dataByDate = {};
 
-// Save the combined data to a JSON file inside the "Dados" folders
-const outputFolderPath = path.join("/tmp", "Dados");
+function getFormattedDate() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const day = today.getDate();
+  return `${day}-${month}-${year}`;
+}
 
-const outputFilePath = `${outputFolderPath}/output.json`;
+scrapeAndUpdateData();
+console.log("Scraping function called on server initialization");
 
+//Inicio Scrap---------------------------------------------------------------------------------
 
-console.log("Current Working Directory:", process.cwd());
-console.log("Absolute Path:", outputFolderPath);
-
-fs.mkdirSync(outputFolderPath, { recursive: true });
-
-fs.mkdirSync(outputFolderPath, { recursive: true });
-
-router.get("/", async (req, res) => {
-  try {
-    await scrapeWebsite();
-    res.send("Scraping initiated.");
-  } catch (error) {
-    console.error("Error:", error.message);
-    res.status(500).send("Internal Server Error");
-  }
-});
-
-router.get("/today", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-
-  try {
-    const rawData = fs.readFileSync(outputFilePath, "utf-8");
-    const allData = JSON.parse(rawData);
-
-    const todayContent = allData[formattedDate];
-
-    if (todayContent != null) {
-      const contentForToday = todayContent;
-      res.json(contentForToday);
-    } else {
-      res.json({
-        error: "No data available for today's date.",
-      });
-    }
-  } catch (error) {
-    console.error("Error:", error.message);
-    res.status(500).json({
-      error: "No data available for today's date.",
-    });
-  }
-});
-
-router.get("/all", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  try {
-    const rawData = fs.readFileSync(outputFilePath, "utf-8");
-    const allData = JSON.parse(rawData);
-
-    const todayContent = allData;
-
-    if (todayContent != null) {
-      const contentForToday = todayContent;
-      res.json(contentForToday);
-    } else {
-      res.json({
-        error: "No data available date.",
-      });
-    }
-  } catch (error) {
-    console.error("Error:", error.message);
-    res.status(500).json({
-      error: "No data available for today's date.",
-    });
-  }
-});
-
-router.post("/todaycurrency", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  try {
-    const rawData = fs.readFileSync(outputFilePath, "utf-8");
-    const allData = JSON.parse(rawData);
-
-    const requestedCurrency = req.body.currency;
-
-    if (allData[formattedDate]) {
-      // Find the currency in the data for the requested date45454
-      const currencyData = allData[formattedDate].find(
-        (entry) => entry.moeda === requestedCurrency
-      );
-
-      // If the currency is found, send its contents
-      if (currencyData) {
-        res.json(currencyData);
-      } else {
-        // If the currency is not found, send a 404 response
-        res.status(404).json({
-          error: "Currency not found for the requested date.",
-        });
-      }
-    } else {
-      // If the requested date is not found, send a 404 response
-      res.status(404).json({
-        error: "Currency not found for the requested date.",
-      });
-    }
-  } catch (error) {
-    console.error("Error:", error.message);
-    res.status(500).json({
-      error: "Error on Currency requested.",
-    });
-  }
-});
-
-router.post("/getbydata", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  try {
-    const rawData = fs.readFileSync(outputFilePath, "utf-8");
-    const allData = JSON.parse(rawData);
-
-    const requestedDate = req.body.date; // Assuming you send the date in the request body
-
-    const requestedContent = allData[requestedDate];
-
-    if (requestedContent != null) {
-      res.json(requestedContent);
-    } else {
-      res.status(404).json({
-        error: "No data available for requested date.",
-      });
-    }
-  } catch (error) {
-    console.error("Error:", error.message);
-    res.status(500).json({
-      error: "Error on Getbydata requested.",
-    });
-  }
-});
-
-router.post("/getbydatacurrency", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "*"); // Replace with your actual frontend URL
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-
-  try {
-    const rawData = fs.readFileSync(outputFilePath, "utf-8");
-    const allData = JSON.parse(rawData);
-
-    const requestedDate = req.body.date;
-    const requestedCurrency = req.body.currency; // Assuming you send the currency in the request body
-
-    // Check if the requested date exists in the datas
-    if (allData[requestedDate]) {
-      // Find the currency in the data for the requested date
-      const currencyData = allData[requestedDate].find(
-        (entry) => entry.moeda === requestedCurrency
-      );
-
-      // If the currency is found, send its contents
-      if (currencyData) {
-        res.json(currencyData);
-      } else {
-        // If the currency is not found, send a 404 response
-        res.status(404).json({
-          error: "Currency not found for the requested date.",
-        });
-      }
-    } else {
-      // If the requested date is not found, send a 404 response
-      res.status(404).json({
-        error: "No data available for requested date.",
-      });
-    }
-  } catch (error) {
-    console.error("Error:", error.message);
-    res.status(500).send("Internal Server Error");
-  }
-});
-
-
-
-async function scrapeWebsite() {
-  const url = `https://jue.mcnet.co.mz/mcnet/portal/exchangerate?selectedDate=${formattedDate}`;
+async function scrapeAndUpdateData() {
+  const url = `https://jue.mcnet.co.mz/mcnet/portal/exchangerate?selectedDate=${getFormattedDate()}`;
 
   try {
     const browser = await puppeteer.launch({
@@ -241,8 +60,6 @@ async function scrapeWebsite() {
 
     // Wait for a specific element to be present on the page
     await page.waitForSelector("tbody");
-
-    let dataByDate = {};
 
     // Wait for the content to load
     await page.waitForSelector("span > a.paginate_button");
@@ -276,10 +93,21 @@ async function scrapeWebsite() {
 
       // Organize data by date
 
-      if (!dataByDate[formattedDate]) {
-        dataByDate[formattedDate] = [];
+      if (!dataByDate[getFormattedDate()]) {
+        dataByDate[getFormattedDate()] = [];
       }
-      dataByDate[formattedDate] = [...dataByDate[formattedDate], ...rowData];
+
+      if (!dataByDate[getFormattedDate()]) {
+        dataByDate[getFormattedDate()] = {};
+      }
+
+      for (const { moeda, descricao, taxa } of rowData) {
+        dataByDate[getFormattedDate()][moeda] = {
+          descricao,
+          moeda,
+          taxa,
+        };
+      }
 
       // Click on the pagination button to go to the next page
       const nextPageButton = await page.$(".paginate_button.next");
@@ -293,36 +121,14 @@ async function scrapeWebsite() {
       }
     }
 
-    // Verifica se o arquivo já existe
-    if (fs.existsSync(outputFilePath)) {
-      // Lê o conteúdo existente do arquivo
-      const existingData = fs.readFileSync(outputFilePath, "utf-8");
-
-      // Converte o conteúdo existente para um objeto JavaScript
-      const existingDataObject = JSON.parse(existingData);
-
-      // Adiciona a nova data ao objeto existente
-      existingDataObject[formattedDate] = dataByDate[formattedDate];
-
-      // Escreve o objeto atualizado de volta no arquivo
-      fs.writeFileSync(
-        outputFilePath,
-        JSON.stringify(existingDataObject, null, 2),
-        "utf-8"
-      );
-    } else {
-      // Se o arquivo não existir, cria um novo arquivo com os dados atuais
-      fs.writeFileSync(
-        outputFilePath,
-        JSON.stringify(dataByDate, null, 2),
-        "utf-8"
-      );
-    }
-
-    console.log("Cambio Actualizado");
-
-    // Close the browser
     await browser.close();
+
+   /*  console.log(dataByDate[getFormattedDate()]) */
+
+     // Push data to Firebase
+    const database = admin.database();
+    const ref = database.ref("exchangeRates/" + getFormattedDate());
+    await ref.set(dataByDate[getFormattedDate()]);
 
     // Add your specific scraping logic here
   } catch (error) {
@@ -330,18 +136,15 @@ async function scrapeWebsite() {
   }
 }
 
-// Schedule the script to run every 30 minutes
+// Schedule cron job
 cron.schedule(
   "0 */5 * * *", // Run every 5 hours
-
   () => {
     console.log("Verificando novo Cambio...");
-    scrapeWebsite();
+    scrapeAndUpdateData(); // No need to set isDataLoaded here, it will be set in the function
   },
   { timezone: "Africa/Maputo" }
 );
 
-scrapeWebsite();
-
-app.use('/.netlify/functions/api', router);
+app.use("/.netlify/functions/api", router);
 module.exports.handler = serverless(app);

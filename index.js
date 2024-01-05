@@ -321,6 +321,8 @@ async function scrapeWebsite() {
   }
 }
 
+
+
 // Schedule the script to run every 30 minutes
 cron.schedule(
   "0 */5 * * *", // Run every 5 hours
