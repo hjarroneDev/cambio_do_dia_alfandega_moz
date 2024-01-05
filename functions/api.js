@@ -123,9 +123,9 @@ async function scrapeAndUpdateData() {
 
     await browser.close();
 
-   /*  console.log(dataByDate[getFormattedDate()]) */
+    /*  console.log(dataByDate[getFormattedDate()]) */
 
-     // Push data to Firebase
+    // Push data to Firebase
     const database = admin.database();
     const ref = database.ref("exchangeRates/" + getFormattedDate());
     await ref.set(dataByDate[getFormattedDate()]);
@@ -138,7 +138,7 @@ async function scrapeAndUpdateData() {
 
 // Schedule cron job
 cron.schedule(
-  "0 */5 * * *", // Run every 5 hours
+  "0 */1 * * *", // Run every 1 hours
   () => {
     console.log("Verificando novo Cambio...");
     scrapeAndUpdateData(); // No need to set isDataLoaded here, it will be set in the function
